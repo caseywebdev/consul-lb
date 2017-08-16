@@ -6,7 +6,7 @@ while [ ! "`ps aux | grep [n]ginx`" ]; do sleep 1; done
 
 if [ "$USE_SSL" == '1' ]; then
   SERVER_NAMES=`
-    fgrep server_name /etc/nginx.conf |
+    fgrep server_name /etc/nginx/nginx.conf |
     sed -E 's/\s*server_name\s+(.+?);/\1/' |
     sort
   `

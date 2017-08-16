@@ -7,11 +7,12 @@
       name: '{{.CONSUL_SERVICE_NAME}}',
       exec: 'bin/nginx',
       when: {source: 'setup', once: 'exitSuccess'},
+      restarts: 'unlimited',
       port: 80,
       health: {
-        exec: 'curl -so /dev/null localhost',
-        interval: 10,
-        ttl: 25
+        exec: 'curl -fsSo /dev/null localhost',
+        interval: 5,
+        ttl: 10
       },
       {{- if .CONSUL_SERVICE_TAGS}}
       tags: ["{{.CONSUL_SERVICE_TAGS | split "," | join "\", \""}}"],
@@ -24,6 +25,7 @@
       name: 'consul-template',
       exec: 'bin/consul-template',
       when: {source: 'setup', once: 'exitSuccess'},
+      restarts: 'unlimited'
     }
   ]
 }
