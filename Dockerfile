@@ -5,7 +5,7 @@ ENV \
   CONTAINERPILOT_VERSION='3.3.4'
 
 RUN \
-  apk --no-cache add certbot curl nginx && \
+  apk --no-cache add certbot curl nginx openssl && \
   mkdir -p /etc/ssl/private /run/nginx && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
     tar xz -C /usr/local/bin && \
