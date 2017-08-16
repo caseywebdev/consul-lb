@@ -2,7 +2,7 @@
   consul: '{{.CONSUL_URL}}',
   jobs: [
     {name: 'setup', exec: 'bin/setup'},
-    {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}},
+    /*{name: 'reload', exec: 'bin/reload', when: {interval: '24h'}},*/
     {
       name: '{{.CONSUL_SERVICE_NAME}}',
       exec: 'bin/nginx',
@@ -10,7 +10,7 @@
       restarts: 'unlimited',
       port: 80,
       health: {
-        exec: 'curl -s localhost > /dev/null',
+        exec: 'curl -so /dev/null localhost',
         interval: 5,
         ttl: 10,
         timeout: '5s'
@@ -22,11 +22,11 @@
         deregisterCriticalServiceAfter: '10m'
       }
     },
-    {
+    /*{
       name: 'consul-template',
       exec: 'bin/consul-template',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
-    }
+    }*/
   ]
 }
