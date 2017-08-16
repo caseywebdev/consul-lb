@@ -10,7 +10,7 @@
       restarts: 'unlimited',
       port: 80,
       health: {
-        exec: 'curl -fsSo /dev/null localhost',
+        exec: 'curl -s localhost > /dev/null',
         interval: 5,
         ttl: 10,
         timeout: '5s'
