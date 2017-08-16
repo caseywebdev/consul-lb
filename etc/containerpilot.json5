@@ -1,0 +1,32 @@
+{
+  consul: '{{.CONSUL_URL}}',
+  jobs: [
+    {name: 'setup', exec: 'bin/setup'},
+    {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}}
+    {
+      name: '{{.CONSUL_SERVICE_NAME}}',
+      exec: 'bin/nginx',
+      when: {source: 'setup', once: 'exitSuccess'},
+      restarts: 'unlimited',
+      port: 80,
+      health: {
+        exec: 'curl -fsSo /dev/null localhost',
+        interval: 5,
+        ttl: 10,
+        timeout: '5s'
+      },
+      {{- if .CONSUL_SERVICE_TAGS}}
+      tags: ["{{join (split .CONSUL_SERVICE_TAGS ",") "\", \"}}"],
+      {{- end}}
+      consul: {
+        deregisterCriticalServiceAfter: '10m'
+      }
+    },
+    {
+      name: 'consul-template',
+      exec: 'bin/consul-template',
+      when: {source: 'setup', once: 'exitSuccess'},
+      restarts: 'unlimited'
+    }
+  ]
+}
