@@ -6,6 +6,7 @@ ENV \
 
 RUN \
   apk --no-cache add curl nginx && \
+  mkdir -p /run/nginx && \
   curl -fLsS https://dl.eff.org/certbot-auto > /usr/local/bin/certbot-auto && \
   chmod +x /usr/local/bin/certbot-auto && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
