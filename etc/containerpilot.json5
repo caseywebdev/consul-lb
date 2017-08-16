@@ -2,7 +2,7 @@
   consul: '{{.CONSUL_URL}}',
   jobs: [
     {name: 'setup', exec: 'bin/setup'},
-    {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}}
+    {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}},
     {
       name: '{{.CONSUL_SERVICE_NAME}}',
       exec: 'bin/nginx',
