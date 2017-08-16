@@ -1,10 +1,10 @@
 {
-  consul: '{{.CONSUL_URL}}',
+  consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {name: 'setup', exec: 'bin/setup'},
     {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}},
     {
-      name: '{{.CONSUL_SERVICE_NAME}}',
+      name: '{{env "CONSUL_SERVICE_NAME"}}',
       exec: 'bin/nginx',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited',
@@ -14,8 +14,8 @@
         interval: 5,
         ttl: 10
       },
-      {{- if .CONSUL_SERVICE_TAGS}}
-      tags: ["{{.CONSUL_SERVICE_TAGS | split "," | join "\", \""}}"],
+      {{- if env "CONSUL_SERVICE_TAGS"}}
+      tags: ["{{env "CONSUL_SERVICE_TAGS" | split "," | join "\", \""}}"],
       {{- end}}
       consul: {
         deregisterCriticalServiceAfter: '10m'
