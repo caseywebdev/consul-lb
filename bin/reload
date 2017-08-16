@@ -11,7 +11,7 @@ if [ "$USE_SSL" == '1' ]; then
     sort
   `
   if [ "$SERVER_NAMES" ]; then
-    SSL_DIR=/etc/ssl/private
+    SSL_DIR=/code/private
     CERT_PATH=$SSL_DIR/fullchain.pem
     KEY_PATH=$SSL_DIR/privkey.pem
 
@@ -39,7 +39,7 @@ if [ "$USE_SSL" == '1' ]; then
 
       echo 'Requesting cert from letsencrypt'
       certbot certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
-        --cert-name=consul-lb --webroot -w /usr/local/nginx/html $ARGS
+        --cert-name=consul-lb --webroot -w /code/public $ARGS
 
       echo "Copying to new cert/key $SSL_DIR"
       cp $LE_CERT_PATH $CERT_PATH

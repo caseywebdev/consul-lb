@@ -4,7 +4,7 @@ set -e
 
 echo 'Setting up'
 if [ "$USE_SSL" == '1' ]; then
-  SSL_DIR=/etc/ssl/private
+  SSL_DIR=/code/private
   CERT_PATH=$SSL_DIR/fullchain.pem
   KEY_PATH=$SSL_DIR/privkey.pem
 
