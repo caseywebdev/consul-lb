@@ -16,7 +16,7 @@
         timeout: '5s'
       },
       {{- if .CONSUL_SERVICE_TAGS}}
-      tags: ["{{join (split .CONSUL_SERVICE_TAGS ",") "\", \"}}"],
+      tags: ["{{.CONSUL_SERVICE_TAGS | split "," | join "\", \""}}"],
       {{- end}}
       consul: {
         deregisterCriticalServiceAfter: '10m'
