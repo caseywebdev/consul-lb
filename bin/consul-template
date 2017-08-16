@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo 'Starting consul template'
 exec consul-template \
   -consul-addr $CONSUL_URL \
   -template /code/etc/nginx.conf:/usr/local/nginx/conf/nginx.conf:/bin/code/reload
