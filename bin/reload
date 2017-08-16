@@ -37,7 +37,7 @@ if [ "$USE_SSL" == '1' ]; then
       for SERVER_NAME in ${SERVER_NAMES[*]}; do ARGS+=" -d $SERVER_NAME"; done
 
       echo 'Requesting cert from letsencrypt'
-      certbot-auto certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
+      certbot certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
         --cert-name=consul-lb --webroot -w /usr/local/nginx/html $ARGS
 
       echo "Copying to new cert/key $SSL_DIR"

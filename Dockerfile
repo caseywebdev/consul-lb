@@ -5,10 +5,8 @@ ENV \
   CONTAINERPILOT_VERSION='3.3.4'
 
 RUN \
-  apk --no-cache add curl nginx && \
-  mkdir -p /run/nginx && \
-  curl -fLsS https://dl.eff.org/certbot-auto > /usr/local/bin/certbot-auto && \
-  chmod +x /usr/local/bin/certbot-auto && \
+  apk --no-cache add certbot curl nginx && \
+  mkdir -p /etc/ssl/private /run/nginx && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
     tar xz -C /usr/local/bin && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
