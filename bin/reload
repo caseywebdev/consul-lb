@@ -2,7 +2,7 @@
 
 set -e
 
-while [ ! "`ps aux | grep [n]ginx`" ]; do sleep 1; done
+while [ ! -f /run/nginx/nginx.pid ]; do sleep 1; done
 
 if [ "$USE_SSL" == '1' ]; then
   SERVER_NAMES=`
