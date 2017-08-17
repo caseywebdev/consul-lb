@@ -5,7 +5,7 @@ set -e
 echo 'Creating initial config'
 consul-template \
   -consul-addr $CONSUL_URL \
-  -dedupe \
+  -dedup \
   -once \
   -template /code/etc/nginx.conf:/etc/nginx/nginx.conf
 

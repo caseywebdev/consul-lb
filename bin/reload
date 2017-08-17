@@ -1,8 +1,8 @@
 #!/bin/sh
 
-#!/bin/sh
-
 set -e
+
+if [ ! -s /run/nginx/nginx.pid ]; then exit; fi
 
 if [ "$USE_SSL" == "1" ]; then
   SERVER_NAMES=$(
