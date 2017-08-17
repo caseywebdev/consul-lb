@@ -2,10 +2,9 @@
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {name: 'setup', exec: 'bin/setup'},
-    {name: 'touch', exec: 'bin/touch', when: {interval: '12h'}},
     {
       name: '{{env "CONSUL_SERVICE_NAME"}}',
-      exec: 'bin/nginx',
+      exec: 'nginx',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited',
       port: 80,
@@ -22,10 +21,17 @@
       }
     },
     {
-      name: 'watch',
-      exec: 'bin/watch',
-      when: {source: 'setup', once: 'exitSuccess'},
+      name: 'watch-cert',
+      exec: 'bin/watch-cert',
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
-    }
+    },
+    {
+      name: 'watch-services',
+      exec: 'bin/watch-services',
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
+      restarts: 'unlimited'
+    },
+    {name: 'check', exec: 'bin/check', when: {interval: '12h'}}
   ]
 }
