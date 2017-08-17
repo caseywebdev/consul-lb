@@ -1,5 +1,0 @@
-#!/bin/sh
-
-if [ -s /run/watch.pid ]; then
-  kill -SIGHUP $(cat /run/watch.pid);
-fi

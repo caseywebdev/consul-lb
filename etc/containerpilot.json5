@@ -21,7 +21,7 @@
       }
     },
     {{- if env "USE_SSL"}}
-    {name: 'trigger-watch', exec: 'bin/trigger-watch', when: {interval: '12h'}},
+    {name: 'reload', exec: 'bin/reload', when: {interval: '12h'}},
     {{- end}}
     {
       name: 'watch',
