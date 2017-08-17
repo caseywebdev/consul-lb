@@ -2,7 +2,9 @@
 
 set -e
 
-if [ ! -s /run/nginx/nginx.pid ]; then exit; fi
+if [ ! -s /run/nginx/nginx.pid ]; then
+  exit
+fi
 
 if [ "$USE_SSL" == "1" ]; then
   SERVER_NAMES=$(
@@ -11,17 +13,20 @@ if [ "$USE_SSL" == "1" ]; then
     sort
   )
 
-  echo "Checking cert is valid for: $SERVER_NAMES"
+  echo "Checking if cert is valid for: $SERVER_NAMES"
 
   if [ "$SERVER_NAMES" ]; then
     SERVER_NAMES_MD5=$(printf "$SERVER_NAMES" | md5sum | awk '{ print $1 }')
     KV_URL=$CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME
     MD5_URL=$KV_URL/$SERVER_NAMES_MD5
-    SIGNAL_URL=$KV_URL/signal
+    VERSION_URL=$KV_URL/version
     TMP_CERT=/tmp/fullchain.pem
     TMP_KEY=/tmp/privkey.pem
-    LIVE_CERT=$LE_DIR/fullchain.pem
-    LIVE_KEY=$LE_DIR/privkey.pem
+    CERT=/code/private/fullchain.pem
+    KEY=/code/private/privkey.pem
+    LE_DIR=/etc/letsencrypt/live/consul-lb
+    LE_CERT=$LE_DIR/fullchain.pem
+    LE_KEY=$LE_DIR/privkey.pem
 
     echo 'Pulling cert by server name MD5 from consul'
     curl -s $MD5_URL/fullchain.pem?raw > $TMP_CERT
@@ -29,33 +34,40 @@ if [ "$USE_SSL" == "1" ]; then
     echo 'Pulling key by server name MD5 from consul'
     curl -s $MD5_URL/privkey.pem?raw > $TMP_CERT
 
-    if openssl x509 -checkend 604800 -noout -in $TMP_CERT >/dev/null 2>&1; then
-      echo 'Cert is good for at least 7 more days'
-      cp -f $TMP_CERT $LIVE_CERT
-      cp -f $TMP_KEY $LIVE_KEY
-      exit
-    fi
+    if openssl x509 -checkend 604800 -in $TMP_CERT; then
+      cp -f $TMP_CERT $CERT
+      cp -f $TMP_KEY $KEY
+    else
+      ARGS='--webroot -n --agree-tos --cert-name=consul-lb -w /code/public'
 
-    echo 'Cert is out of date or does not exist'
+      if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then
+        ARGS="$ARGS --test-cert";
+      fi
 
-    ARGS=''
-    if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then ARGS="$ARGS --test-cert"; fi
-    for SERVER_NAME in $SERVER_NAMES; do ARGS="$ARGS -d $SERVER_NAME"; done
+      if [ "$LETSENCRYPT_EMAIL_ADDRESS" ]; then
+        ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
+      fi
 
-    echo 'Requesting cert from letsencrypt'
-    if
-      certbot certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
-        --cert-name=consul-lb --webroot -w /code/public $ARGS
-    then
+      for SERVER_NAME in $SERVER_NAMES; do
+        ARGS="$ARGS -d $SERVER_NAME";
+      done
 
-      echo 'Saving current cert to consul'
-      curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LIVE_CERT > /dev/null
+      echo 'Requesting cert from letsencrypt'
+      if certbot certonly $ARGS; then
+        echo 'Pushing current cert by server name MD5 to consul'
+        curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LE_CERT > /dev/null
 
-      echo 'Saving current key to consul'
-      curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LIVE_KEY > /dev/null
+        echo 'Saving current key by server name MD5 to consul'
+        curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LE_KEY > /dev/null
 
-      echo 'Signaling new certs'
-      curl -fsSXPUT $SIGNAL_URL -d 1 > /dev/null
+        echo 'Updating cert version'
+        VERSION=$(md5sum $LE_CERT | awk '{ print $1 }')
+        curl -fsSXPUT $VERSION_URL -d $VERSION  > /dev/null
+
+        # The version update above will trigger another consul-template run, so
+        # let the nginx reload happen then.
+        exit
+      fi
     fi
   fi
 fi

@@ -1,6 +1,9 @@
 {
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
+    {{- if env "USE_SSL"}}
+    {name: 'reload', exec: 'bin/reload', when: {interval: '12h'}},
+    {{- end}}
     {name: 'setup', exec: 'bin/setup'},
     {
       name: '{{env "CONSUL_SERVICE_NAME"}}',
@@ -8,25 +11,21 @@
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited',
       port: 80,
-      health: {
-        exec: 'curl -fsSo /dev/null localhost',
-        interval: 5,
-        ttl: 10
-      },
       {{- if env "CONSUL_SERVICE_TAGS"}}
       tags: ["{{env "CONSUL_SERVICE_TAGS" | split "," | join "\", \""}}"],
       {{- end}}
-      consul: {
-        deregisterCriticalServiceAfter: '10m'
-      }
+      health: {exec: 'curl -fsSo /dev/null localhost', interval: 5, ttl: 10},
+      consul: {deregisterCriticalServiceAfter: '10m'}
     },
-    {{- if env "USE_SSL"}}
-    {name: 'reload', exec: 'bin/reload', when: {interval: '12h'}},
-    {{- end}}
+    {
+      name: 'initial-reload',
+      exec: 'bin/reload',
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
+    },
     {
       name: 'watch',
       exec: 'bin/watch',
-      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
+      when: {source: 'initial-reload', once: 'exitSuccess'},
       restarts: 'unlimited'
     }
   ]

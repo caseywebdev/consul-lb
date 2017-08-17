@@ -10,10 +10,10 @@ consul-template \
   -template /code/etc/nginx.conf:/etc/nginx/nginx.conf
 
 if [ "$USE_SSL" == '1' ]; then
-  CERT=$LE_DIR/fullchain.pem
-  KEY=$LE_DIR/privkey.pem
+  CERT=/code/private/fullchain.pem
+  KEY=/code/private/privkey.pem
   echo 'Creating self-signed cert so nginx can start'
   openssl genrsa 4096 > $KEY 2> /dev/null
   openssl req -new -key $KEY -subj "/C=AA/ST=A/L=A/O=A/CN=*" 2> /dev/null |
-    openssl x509 -req -days 3650 -signkey $KEY > $CERT 2> /dev/null
+    openssl x509 -req -days 1 -signkey $KEY > $CERT 2> /dev/null
 fi
