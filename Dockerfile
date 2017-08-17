@@ -6,7 +6,7 @@ ENV \
 
 RUN \
   apk --no-cache add certbot curl nginx openssl && \
-  mkdir -p /code/public /run/nginx && \
+  mkdir -p /etc/letsencrypt/live/consul-lb /code/public /run/nginx && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
     tar xz -C /usr/local/bin && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
