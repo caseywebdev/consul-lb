@@ -17,7 +17,7 @@ if [ "$USE_SSL" == "1" ]; then
 
   if [ "$SERVER_NAMES" ]; then
     SERVER_NAMES_MD5=$(printf "$SERVER_NAMES" | md5sum | awk '{ print $1 }')
-    KV_URL=$CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME
+    KV_URL=$CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT
     MD5_URL=$KV_URL/$SERVER_NAMES_MD5
     VERSION_URL=$KV_URL/version
     TMP_CERT=/tmp/fullchain.pem
@@ -34,11 +34,8 @@ if [ "$USE_SSL" == "1" ]; then
     echo 'Pulling key by server name MD5 from consul'
     curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
-    echo 'Checking cert expiration and validity'
-    if
-      openssl x509 -checkend 2592000 -in $TMP_CERT &&
-      ([ "$LETSENCRYPT_TEST_CERT" == '1' ] || openssl verify $TMP_CERT)
-    then
+    echo 'Checking if the cert will expire within the next 30 days'
+    if openssl x509 -checkend 2592000; then
       cp -f $TMP_CERT $CERT
       cp -f $TMP_KEY $KEY
     else
