@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+echo 'Watching for service changes'
+exec consul-template \
+  -consul-addr $CONSUL_URL \
+  -dedup \
+  -pid-file /run/watch.pid \
+  -template /code/etc/nginx.conf:/etc/nginx/nginx.conf:/code/bin/reload

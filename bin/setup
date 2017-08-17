@@ -2,36 +2,18 @@
 
 set -e
 
-LE_DIR=/etc/letsencrypt/live/consul-lb
-CERT_PATH=$LE_DIR/fullchain.pem
-KEY_PATH=$LE_DIR/privkey.pem
-
-ARGS=''
-if [ "$USE_SSL" == '1']; then
-  ARGS="
-    -template /code/etc/fullchain.pem:$CERT_PATH
-    -template /code/etc/privkey.pem:$KEY_PATH
-  "
-fi
-
 echo 'Creating initial config'
 consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
   -once \
-  -template /code/etc/nginx.conf:/etc/nginx/nginx.conf $ARGS
+  -template /code/etc/nginx.conf:/etc/nginx/nginx.conf
 
 if [ "$USE_SSL" == '1' ]; then
-  echo 'Using SSL'
-
-  if [ ! -s $KEY_PATH ]; then
-    echo 'No key found, creating a temporary key'
-    openssl genrsa 4096 > $KEY_PATH 2> /dev/null
-  fi
-
-  if [ ! -s $CERT_PATH ]; then
-    echo 'No cert found, creating a temporary self-signed cert'
-    openssl req -new -key $KEY_PATH -subj "/C=AA/ST=A/L=A/O=A/CN=*" 2> /dev/null |
-      openssl x509 -req -days 3650 -signkey $KEY_PATH > $CERT_PATH 2> /dev/null
-  fi
+  CERT=$LE_DIR/fullchain.pem
+  KEY=$LE_DIR/privkey.pem
+  echo 'Creating self-signed cert so nginx can start'
+  openssl genrsa 4096 > $KEY 2> /dev/null
+  openssl req -new -key $KEY -subj "/C=AA/ST=A/L=A/O=A/CN=*" 2> /dev/null |
+    openssl x509 -req -days 3650 -signkey $KEY > $CERT 2> /dev/null
 fi
