@@ -35,7 +35,7 @@ if [ "$USE_SSL" == "1" ]; then
     curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
     echo 'Checking if the cert will expire within the next 30 days'
-    if openssl x509 -checkend 2592000; then
+    if openssl x509 -checkend 2592000 -in $TMP_CERT; then
       cp -f $TMP_CERT $CERT
       cp -f $TMP_KEY $KEY
     else
