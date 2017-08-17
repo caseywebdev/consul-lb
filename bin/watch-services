@@ -2,7 +2,8 @@
 
 set -e
 
-echo 'Watching for service changes...'
+echo 'Watching for service changes'
 exec consul-template \
   -consul-addr $CONSUL_URL \
+  -dedup \
   -template /code/etc/nginx.conf:/etc/nginx/nginx.conf:/code/bin/check-and-reload

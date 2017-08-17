@@ -2,8 +2,9 @@
 
 set -e
 
-echo 'Watching for cert changes...'
+echo 'Watching for cert changes'
 exec consul-template \
   -consul-addr $CONSUL_URL \
+  -deup \
   -template /code/etc/fullchain.pem:$LE_DIR/fullchain.pem:/code/bin/reload \
   -template /code/etc/privkey.pem:$LE_DIR/privkey.pem:/code/bin/reload

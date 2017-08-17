@@ -4,6 +4,8 @@ set -e
 
 if [ "$USE_SSL" != '1' ]; then exit; fi
 
+echo 'Checking cert'
+
 SERVER_NAMES=$(
   fgrep server_name /etc/nginx/nginx.conf |
   sed -E 's/\s*server_name\s+(.+?);/\1/' |
