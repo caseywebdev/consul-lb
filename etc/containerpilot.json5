@@ -25,7 +25,7 @@
     {{- end}}
     {
       name: 'watch',
-      exec: 'bin/watch-services',
+      exec: 'bin/watch',
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
     }

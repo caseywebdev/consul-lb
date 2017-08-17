@@ -43,17 +43,20 @@ if [ "$USE_SSL" == "1" ]; then
     for SERVER_NAME in $SERVER_NAMES; do ARGS="$ARGS -d $SERVER_NAME"; done
 
     echo 'Requesting cert from letsencrypt'
-    certbot certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
-      --cert-name=consul-lb --webroot -w /code/public $ARGS
+    if
+      certbot certonly -n --agree-tos --email=$LETSENCRYPT_EMAIL_ADDRESS \
+        --cert-name=consul-lb --webroot -w /code/public $ARGS
+    then
 
-    echo 'Saving current cert to consul'
-    curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LIVE_CERT > /dev/null
+      echo 'Saving current cert to consul'
+      curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LIVE_CERT > /dev/null
 
-    echo 'Saving current key to consul'
-    curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LIVE_KEY > /dev/null
+      echo 'Saving current key to consul'
+      curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LIVE_KEY > /dev/null
 
-    echo 'Signaling new certs'
-    curl -fsSXPUT $SIGNAL_URL -d 1 > /dev/null
+      echo 'Signaling new certs'
+      curl -fsSXPUT $SIGNAL_URL -d 1 > /dev/null
+    fi
   fi
 fi
 
