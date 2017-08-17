@@ -3,7 +3,7 @@
 set -e
 
 if [ "$USE_SSL" == '1' ]; then
-  SSL_DIR=/code/private
+  LE_DIR=/etc/letsencrypt/live/consul-lb
   CERT_PATH=$LE_DIR/fullchain.pem
   KEY_PATH=$LE_DIR/privkey.pem
 
