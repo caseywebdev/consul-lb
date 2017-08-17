@@ -2,6 +2,7 @@
 
 set -e
 
+echo 'Running setup'
 if [ "$USE_SSL" == '1' ]; then
   LE_DIR=/etc/letsencrypt/live/consul-lb
   CERT_PATH=$LE_DIR/fullchain.pem
@@ -19,6 +20,7 @@ if [ "$USE_SSL" == '1' ]; then
   fi
 fi
 
+echo 'Creating initial config'
 exec consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \

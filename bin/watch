@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -e
+
+echo 'Starting consul-template in watch mode'
 exec consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
