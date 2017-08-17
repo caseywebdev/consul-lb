@@ -20,18 +20,20 @@
         deregisterCriticalServiceAfter: '10m'
       }
     },
+    {{- if env "USE_SSL"}}
     {
       name: 'watch-cert',
       exec: 'bin/watch-cert',
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
     },
+    {name: 'check', exec: 'bin/check', when: {interval: '12h'}},
+    {{- end}}
     {
       name: 'watch-services',
       exec: 'bin/watch-services',
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
-    },
-    {name: 'check', exec: 'bin/check', when: {interval: '12h'}}
+    }
   ]
 }

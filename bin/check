@@ -2,8 +2,6 @@
 
 set -e
 
-if [ "$USE_SSL" != '1' ]; then exit; fi
-
 echo 'Checking cert'
 
 SERVER_NAMES=$(
@@ -22,7 +20,13 @@ LIVE_URL=$KV_URL/live
 CERT_PATH=$LE_DIR/fullchain.pem
 KEY_PATH=$LE_DIR/privkey.pem
 
-if openssl x509 -checkend 604800 -noout -in $CERT_PATH; then
+echo 'Pulling cert by server name MD5 from consul'
+curl -s $MD5_URL/fullchain.pem?raw > $CERT_PATH
+
+echo 'Pulling key by server name MD5 from consul'
+curl -s $MD5_URL/privkey.pem?raw > $KEY_PATH
+
+if openssl x509 -checkend 604800 -noout -in $CERT_PATH >/dev/null 2>&1; then
   echo 'Cert is good for at least 7 more days'
   exit
 fi
