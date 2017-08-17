@@ -32,7 +32,7 @@ if [ "$USE_SSL" == "1" ]; then
     curl -s $MD5_URL/fullchain.pem?raw > $TMP_CERT
 
     echo 'Pulling key by server name MD5 from consul'
-    curl -s $MD5_URL/privkey.pem?raw > $TMP_CERT
+    curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
     if openssl x509 -checkend 604800 -in $TMP_CERT; then
       cp -f $TMP_CERT $CERT
