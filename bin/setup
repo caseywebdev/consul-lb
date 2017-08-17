@@ -2,11 +2,10 @@
 
 set -e
 
-echo 'Setting up'
 if [ "$USE_SSL" == '1' ]; then
   SSL_DIR=/code/private
-  CERT_PATH=$SSL_DIR/fullchain.pem
-  KEY_PATH=$SSL_DIR/privkey.pem
+  CERT_PATH=$LE_DIR/fullchain.pem
+  KEY_PATH=$LE_DIR/privkey.pem
 
   if [ ! -s $KEY_PATH ]; then
     echo 'Key does not exist, creating a temporary key'
@@ -20,8 +19,8 @@ if [ "$USE_SSL" == '1' ]; then
   fi
 fi
 
-echo 'Creating initial nginx config'
 exec consul-template \
-  -once \
   -consul-addr $CONSUL_URL \
+  -dedup \
+  -once \
   -template /code/etc/nginx.conf:/etc/nginx/nginx.conf

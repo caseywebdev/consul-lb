@@ -2,7 +2,7 @@
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {name: 'setup', exec: 'bin/setup'},
-    {name: 'reload', exec: 'bin/reload', when: {interval: '24h'}},
+    {name: 'touch', exec: 'bin/touch', when: {interval: '12h'}},
     {
       name: '{{env "CONSUL_SERVICE_NAME"}}',
       exec: 'bin/nginx',
@@ -22,8 +22,8 @@
       }
     },
     {
-      name: 'consul-template',
-      exec: 'bin/consul-template',
+      name: 'watch',
+      exec: 'bin/watch',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
     }

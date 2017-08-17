@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+PID=/var/consul-template.pid
+[ -f $PID ] && kill -SIGHUP $(cat $PID)
