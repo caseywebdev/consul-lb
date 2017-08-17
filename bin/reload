@@ -34,7 +34,11 @@ if [ "$USE_SSL" == "1" ]; then
     echo 'Pulling key by server name MD5 from consul'
     curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
-    if openssl x509 -checkend 604800 -in $TMP_CERT; then
+    echo 'Checking cert expiration and validity'
+    if
+      openssl x509 -checkend 604800 -in $TMP_CERT &&
+      ([ "$LETSENCRYPT_TEST_CERT" == '1' ] || openssl verify $TMP_CERT)
+    then
       cp -f $TMP_CERT $CERT
       cp -f $TMP_KEY $KEY
     else
