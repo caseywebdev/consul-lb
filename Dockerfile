@@ -19,8 +19,7 @@ COPY bin /code/bin
 COPY etc /code/etc
 
 ENV \
-  CONSUL_KV_PATH='/consul-lb' \
-  CONSUL_LB_PREFIX='consul-lb=' \
+  CONSUL_TAG_PREFIX='consul-lb=' \
   CONSUL_SERVICE_NAME='consul-lb' \
   CONSUL_SERVICE_TAGS='' \
   CONSUL_URL='http://consul.example.com:8500' \
