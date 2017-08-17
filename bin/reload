@@ -5,7 +5,7 @@ set -e
 echo 'Reloading config'
 
 echo 'Waiting for nginx...'
-while [ ! -f /run/nginx/nginx.pid ]; do sleep 1; done
+while [ ! -s /run/nginx/nginx.pid ]; do sleep 1; done
 
 echo 'Nginx is running'
 

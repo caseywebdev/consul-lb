@@ -3,7 +3,7 @@
 set -e
 
 PID=/var/consul-template.pid
-if [ -f $PID ]; then
+if [ -s $PID ]; then
   echo 'Telling watcher to update config'
   kill -SIGHUP $(cat $PID)
 fi
