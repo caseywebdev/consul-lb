@@ -7,7 +7,8 @@ consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
   -once \
-  -template /code/etc/nginx.conf:/etc/nginx/nginx.conf
+  -template /code/etc/auth.json.gotmpl:/code/private/auth.json:/code/bin/auth \
+  -template /code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf
 
 if [ "$USE_SSL" == '1' ]; then
   CERT=/code/private/fullchain.pem

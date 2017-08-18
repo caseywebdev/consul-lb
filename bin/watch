@@ -6,4 +6,5 @@ echo 'Watching for service changes'
 exec consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
-  -template /code/etc/nginx.conf:/etc/nginx/nginx.conf:/code/bin/reload
+  -template /code/etc/auth.json.gotmpl:/code/private/auth.json:/code/bin/auth \
+  -template /code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf:/code/bin/reload

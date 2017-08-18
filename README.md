@@ -18,12 +18,17 @@ docker run
 
   # This is the tag prefix consul-lb will look for in each service to determine
   # if and when traffic should be routed to that service. For example a service
-  # that registers with the tag "consul-lb=foo.example.com" will be routed
+  # that registers with the tag "consul-lb.url=foo.example.com" will be routed
   # traffic that hits consul-lb from the host "foo.example.com". Path routing is
   # also supported, so a service that registers with the tag
-  # "consul-lb=bar.example.org/baz" will receive traffic from the host
+  # "consul-lb.url=bar.example.org/baz" will receive traffic from the host
   # "bar.example.org" and the path "/baz".
-  -e CONSUL_TAG_PREFIX='consul-lb='
+  #
+  # To enable basic auth for a service, add the tag "<your prefix>.auth=<consul
+  # key>" where the value at <consul key> is a basic auth user file as defined
+  # at
+  # http://nginx.org/en/docs/http/ngx_http_auth_basic_module.html#auth_basic_user_file
+  -e CONSUL_TAG_PREFIX='consul-lb'
 
   # This is the service name with which consul-lb will register in consul, as
   # well as the first part of the kv path consul-lb will be using for storage.

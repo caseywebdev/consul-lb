@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+for key in $(jq -r keys[] /private/auth.json); do
+  jq -r .$key /private/auth.json > /private/$key.auth
+done
+
+if [ -s /run/nginx/nginx.pid ]; then
+  nginx -s reload
+fi
