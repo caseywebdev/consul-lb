@@ -85,13 +85,16 @@ http {
     listen {{if eq (env "USE_SSL") "1"}}443 ssl{{else}}80{{end}};
     server_name {{$domain}};
 
+  {{- $authsByDomain := scratch.Get (print "authsByDomain:" .) -}}
   {{- range scratch.MapValues (print "pathsByDomain:" $domain)}}
 
     location {{.}} {
-    {{- if $auth := index (scratch.Get (print "authsByDomain:" $domain)) .}}
+    {{- if $authsByDomain -}}
+      {{- if $auth := index authsByDomain .}}
       auth_basic Restricted;
       auth_basic_user_file /code/private/{{$auth}}.auth;
-    {{- end}}
+      {{- end}}
+    {{- end -}}
       proxy_pass http://{{index (scratch.Get (print "upstreamsByDomain:" $domain)) .}};
     }
   {{- end}}
