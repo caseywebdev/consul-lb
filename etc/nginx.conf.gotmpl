@@ -45,21 +45,21 @@ http {
     {{- range .Tags -}}
       {{ if regexMatch $prefixUrlRegex . -}}
         {{- if $url := index (split $prefixUrlSplit .) 1 -}}
-          {{- $server := regexReplaceAll "/.*$" "" $url -}}
-          {{- $path := regexReplaceAll (print "^" $server "/?") "/" $url -}}
-          {{- $upstream := regexReplaceAll "[^0-9A-Za-z_]" "_" (print $server $path) -}}
-          {{- $host := (print $service.Address ":" $service.Port) -}}
-          {{- scratch.MapSet "servers" $server $server -}}
-          {{- scratch.MapSet (print "pathsByServer:" $server) $path $path -}}
-          {{- scratch.MapSet (print "upstreamsByServer:" $server) $path $upstream -}}
+          {{- $domain := regexReplaceAll "/.*$" "" $url -}}
+          {{- $path := regexReplaceAll (print "^" $domain "/?") "/" $url -}}
+          {{- $upstream := regexReplaceAll "[^0-9A-Za-z_]" "_" (print $domain $path) -}}
+          {{- $server := (print $service.Address ":" $service.Port) -}}
+          {{- scratch.MapSet "domains" $domain $domain -}}
+          {{- scratch.MapSet (print "pathsByDomain:" $domain) $path $path -}}
+          {{- scratch.MapSet (print "upstreamsByDomain:" $domain) $path $upstream -}}
           {{- if ne $service.Status "failing" -}}
-            {{- scratch.MapSet (print "hostsByUpstream:" $upstream) $host $host}}
+            {{- scratch.MapSet (print "serversByUpstream:" $upstream) $server $server}}
           {{- end -}}
           {{- range $service.Tags -}}
             {{ if regexMatch $prefixAuthRegex . -}}
               {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
                 {{- $auth := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth -}}
-                {{- scratch.MapSet (print "authsByServer:" $server) $path $auth -}}
+                {{- scratch.MapSet (print "authsByDomain:" $domain) $path $auth -}}
               {{- end -}}
             {{- end -}}
           {{- end -}}
@@ -68,12 +68,12 @@ http {
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- range $server := scratch.MapValues "servers" -}}
-  {{- range scratch.MapValues (print "upstreamsByServer:" .)}}
+{{- range $domain := scratch.MapValues "domains" -}}
+  {{- range scratch.MapValues (print "upstreamsByDomain:" .)}}
 
   upstream {{.}} {
     least_conn;
-    {{- range scratch.MapValues (print "hostsByUpstream:" .)}}
+    {{- range scratch.MapValues (print "serversByUpstream:" .)}}
     server {{.}};
     {{- else -}}
     server localhost:65535;
@@ -83,16 +83,16 @@ http {
 
   server {
     listen {{if eq (env "USE_SSL") "1"}}443 ssl{{else}}80{{end}};
-    server_name {{$server}};
+    server_name {{$domain}};
 
-  {{- range scratch.MapValues (print "pathsByServer:" $server)}}
+  {{- range scratch.MapValues (print "pathsByDomain:" $domain)}}
 
     location {{.}} {
-    {{- if $auth := index (scratch.Get (print "authsByServer:" $server)) . -}}
+    {{- if $auth := index (scratch.Get (print "authsByDomain:" $domain)) . -}}
       auth_basic Restricted;
       auth_basic_user_file /code/private/{{$auth}}.auth;
     {{- end}}
-      proxy_pass http://{{index (scratch.Get (print "upstreamsByServer:" $server)) .}};
+      proxy_pass http://{{index (scratch.Get (print "upstreamsByDomain:" $domain)) .}};
     }
   {{- end}}
   }

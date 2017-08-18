@@ -8,7 +8,7 @@
         {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
           {{- $key := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth | toJSON -}}
           {{- $value := keyOrDefault $auth "" | toJSON -}}
-          {{- scratch.MapSet "auths" $auth (print "{" $key ": " $value "}") -}}
+          {{- scratch.MapSet "auths" $auth (print $key ": " $value) -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}
