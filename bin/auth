@@ -2,8 +2,8 @@
 
 set -e
 
-for key in $(jq -r keys[] /private/auth.json); do
-  jq -r .$key /private/auth.json > /private/$key.auth
+for key in $(jq -r keys[] /code/private/auth.json); do
+  jq -r .$key /code/private/auth.json > /code/private/$key.auth
 done
 
 if [ -s /run/nginx/nginx.pid ]; then

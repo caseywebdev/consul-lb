@@ -2,9 +2,9 @@
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {{- if env "USE_SSL"}}
-    {name: 'reload', exec: 'bin/reload', when: {interval: '12h'}},
+    {name: 'reload', exec: '/code/bin/reload', when: {interval: '12h'}},
     {{- end}}
-    {name: 'setup', exec: 'bin/setup'},
+    {name: 'setup', exec: '/code/bin/setup'},
     {
       name: '{{env "CONSUL_SERVICE_NAME"}}',
       exec: 'nginx',
@@ -19,12 +19,12 @@
     },
     {
       name: 'initial-reload',
-      exec: 'bin/reload',
+      exec: '/code/bin/reload',
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
     },
     {
       name: 'watch',
-      exec: 'bin/watch',
+      exec: '/code/bin/watch',
       when: {source: 'initial-reload', once: 'exitSuccess'},
       restarts: 'unlimited'
     }
