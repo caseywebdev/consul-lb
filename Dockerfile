@@ -27,4 +27,7 @@ ENV \
   LETSENCRYPT_TEST_CERT='0' \
   USE_SSL='1'
 
+EXPOSE 80
+EXPOSE 443
+
 CMD ["containerpilot"]
