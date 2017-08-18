@@ -2,12 +2,14 @@
 {{- $prefixAuthRegex := print "^" $prefix "\\.auth=" -}}
 {{- $prefixAuthSplit := print $prefix ".auth=" -}}
 {{- range services -}}
-  {{- range $service := service (print .Name "|any") -}}
-    {{- range $service.Tags | regexMatch $prefixAuthRegex -}}
-      {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
-        {{- $key := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth | toJSON -}}
-        {{- $value := keyOrDefault $auth "" | toJSON -}}
-        {{- scratch.MapSet "auths" $auth (print "{" $key ": " $value "}") -}}
+  {{- range service (print .Name "|any") -}}
+    {{- range .Tags -}}
+      {{- if regexMatch $prefixAuthRegex . -}}
+        {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
+          {{- $key := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth | toJSON -}}
+          {{- $value := keyOrDefault $auth "" | toJSON -}}
+          {{- scratch.MapSet "auths" $auth (print "{" $key ": " $value "}") -}}
+        {{- end -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}

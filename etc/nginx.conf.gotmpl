@@ -42,22 +42,26 @@ http {
 {{- $prefixUrlSplit := print $prefix ".url=" -}}
 {{- range services -}}
   {{- range $service := service (print .Name "|any") -}}
-    {{- range .Tags | regexMatch $prefixUrlRegex -}}
-      {{- if $url := index (split $prefixUrlSplit .) 1 -}}
-        {{- $server := regexReplaceAll "/.*$" "" $url -}}
-        {{- $path := regexReplaceAll (print "^" $server "/?") "/" $url -}}
-        {{- $upstream := regexReplaceAll "[^0-9A-Za-z_]" "_" (print $server $path) -}}
-        {{- $host := (print $service.Address ":" $service.Port) -}}
-        {{- scratch.MapSet "servers" $server $server -}}
-        {{- scratch.MapSet (print "pathsByServer:" $server) $path $path -}}
-        {{- scratch.MapSet (print "upstreamsByServer:" $server) $path $upstream -}}
-        {{- if ne $service.Status "failing" -}}
-          {{- scratch.MapSet (print "hostsByUpstream:" $upstream) $host $host}}
-        {{- end -}}
-        {{- range $service.Tags | regexMatch $prefixAuthRegex -}}
-          {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
-            {{- $auth := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth -}}
-            {{- scratch.MapSet (print "authsByServer:" $server) $path $auth -}}
+    {{- range .Tags -}}
+      {{ if regexMatch $prefixUrlRegex . -}}
+        {{- if $url := index (split $prefixUrlSplit .) 1 -}}
+          {{- $server := regexReplaceAll "/.*$" "" $url -}}
+          {{- $path := regexReplaceAll (print "^" $server "/?") "/" $url -}}
+          {{- $upstream := regexReplaceAll "[^0-9A-Za-z_]" "_" (print $server $path) -}}
+          {{- $host := (print $service.Address ":" $service.Port) -}}
+          {{- scratch.MapSet "servers" $server $server -}}
+          {{- scratch.MapSet (print "pathsByServer:" $server) $path $path -}}
+          {{- scratch.MapSet (print "upstreamsByServer:" $server) $path $upstream -}}
+          {{- if ne $service.Status "failing" -}}
+            {{- scratch.MapSet (print "hostsByUpstream:" $upstream) $host $host}}
+          {{- end -}}
+          {{- range $service.Tags -}}
+            {{ if regexMatch $prefixAuthRegex . -}}
+              {{- if $auth := index (split $prefixAuthSplit .) 1 -}}
+                {{- $auth := regexReplaceAll "[^0-9A-Za-z_]" "_" $auth -}}
+                {{- scratch.MapSet (print "authsByServer:" $server) $path $auth -}}
+              {{- end -}}
+            {{- end -}}
           {{- end -}}
         {{- end -}}
       {{- end -}}
