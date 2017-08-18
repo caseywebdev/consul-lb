@@ -75,7 +75,7 @@ http {
     least_conn;
     {{- range scratch.MapValues (print "serversByUpstream:" .)}}
     server {{.}};
-    {{- else -}}
+    {{- else}}
     server localhost:65535;
     {{- end}}
   }
@@ -88,7 +88,7 @@ http {
   {{- range scratch.MapValues (print "pathsByDomain:" $domain)}}
 
     location {{.}} {
-    {{- if $auth := index (scratch.Get (print "authsByDomain:" $domain)) . -}}
+    {{- if $auth := index (scratch.Get (print "authsByDomain:" $domain)) .}}
       auth_basic Restricted;
       auth_basic_user_file /code/private/{{$auth}}.auth;
     {{- end}}

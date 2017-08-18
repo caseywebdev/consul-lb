@@ -8,9 +8,10 @@ fi
 
 if [ "$USE_SSL" == "1" ]; then
   DOMAINS=$(
-    fgrep server_name /etc/nginx/nginx.conf |
+    fgrep server_ame /etc/nginx/nginx.conf |
     sed -E 's/\s*server_name\s+(.+?);/\1/' |
-    sort
+    sort |
+    tr '\n' ' '
   )
 
   if [ "$DOMAINS" ]; then
