@@ -85,7 +85,7 @@ http {
 
     location {{.}} {
     {{- if $auth := index (scratch.Get (print "authsByServer:" $server)) . -}}
-      auth_basic on;
+      auth_basic Restricted;
       auth_basic_user_file /code/private/{{$auth}}.auth;
     {{- end}}
       proxy_pass http://{{index (scratch.Get (print "upstreamsByServer:" $server)) .}};
