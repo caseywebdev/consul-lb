@@ -21,7 +21,7 @@ ENV \
   CONSUL_TAG_PREFIX='consul-lb=' \
   CONSUL_SERVICE_NAME='consul-lb' \
   CONSUL_SERVICE_TAGS='' \
-  CONSUL_URL='http://consul.example.com:8500' \
+  CONSUL_URL='http://consul:8500' \
   CONTAINERPILOT='/code/etc/containerpilot.json5' \
   LETSENCRYPT_EMAIL_ADDRESS='' \
   LETSENCRYPT_TEST_CERT='0' \
