@@ -14,8 +14,8 @@ RUN \
 
 WORKDIR /code
 
-COPY bin /code/bin
-COPY etc /code/etc
+COPY bin bin
+COPY etc etc
 
 ENV \
   CONSUL_TAG_PREFIX='consul-lb' \
