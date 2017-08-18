@@ -14,9 +14,10 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- $output := "" -}}
+{{- scratch.Set "output" "" -}}
 {{- range scratch.MapValues "auths" -}}
-  {{- if $output -}}{{- $output := print $output "," -}}{{- end -}}
-  {{- $output := print $output . -}}
+  {{- $output := scratch.Get "output" -}}
+  {{- if $output -}}{{- scratch.Set "output" (print "," $output) -}}{{- end -}}
+  {{- scratch.Set "output" (print (scratch.Get "output") .) -}}
 {{- end -}}
-{{"{"}}{{$output}}{{"}"}}
+{{"{"}}{{scratch.Get "output"}}{{"}"}}
