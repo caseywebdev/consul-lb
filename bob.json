@@ -1,6 +1,6 @@
 {
   "tags": [
-    "quay.io/coderiety/consul-lb:{{REF}}",
-    "quay.io/coderiety/consul-lb:{{SHA}}"
+    "coderiety/consul-lb:{{REF}}",
+    "coderiety/consul-lb:{{SHA}}"
   ]
 }
