@@ -16,18 +16,22 @@ http {
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_set_header X-Real-IP $remote_addr;
 
+{{- $kv := (print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT")) -}}
 {{- if eq (env "USE_SSL") "1" }}
 
-  # VERSION {{keyOrDefault (print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT") "/version") "?"}}
+  # VERSION {{keyOrDefault (print $kv "/version") "?"}}
   ssl_certificate /code/private/fullchain.pem;
   ssl_certificate_key /code/private/privkey.pem;
 
   server {
     listen 80 default_server;
 
-    root /code/public;
+  {{- range ls (print $kv "/acme-challenge")}}
 
-    location /.well-known/acme-challenge {}
+    location /.well-known/acme-challenge/{{.Key}} {
+      return 200 "{{.Value}}";
+    }
+  {{- end}}
 
     location / {
       return 302 https://$host$request_uri;

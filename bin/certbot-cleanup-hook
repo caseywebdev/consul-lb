@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+curl \
+  -fsSXDELETE \
+  $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/acme-challenge/$CERTBOT_TOKEN

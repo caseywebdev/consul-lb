@@ -17,9 +17,11 @@ if [ "$USE_SSL" == "1" ]; then
   if [ "$DOMAINS" ]; then
     echo "Checking if cert is valid for: $DOMAINS"
     DOMAINS_MD5=$(printf "$DOMAINS" | md5sum | awk '{ print $1 }')
+    SESSION_URL=$CONSUL_URL/v1/session/create
     KV_URL=$CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT
     MD5_URL=$KV_URL/$DOMAINS_MD5
     VERSION_URL=$KV_URL/version
+    LOCK_URL=$KV_URL/acme-challenge-lock
     TMP_CERT=/tmp/fullchain.pem
     TMP_KEY=/tmp/privkey.pem
     CERT=/code/private/fullchain.pem
@@ -39,35 +41,43 @@ if [ "$USE_SSL" == "1" ]; then
       cp -f $TMP_CERT $CERT
       cp -f $TMP_KEY $KEY
     else
-      ARGS='--webroot -n --agree-tos --cert-name=consul-lb -w /code/public'
+      echo 'Cert is out of date, creating session and acquiring lock'
+      $SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq .ID)
+      if curl -fsSXPUT "$LOCK_URL?acquire=$SESSION"; then
 
-      if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then
-        ARGS="$ARGS --test-cert";
-      fi
+        ARGS='certonly --manual -n --agree-tos --cert-name=consul-lb'
+        ARGS="$ARGS --manual-auth-hook=/code/bin/certbot-auth-hook"
+        ARGS="$ARGS --manual-cleanup-hook=/code/bin/certbot-cleanup-hook"
 
-      if [ "$LETSENCRYPT_EMAIL_ADDRESS" ]; then
-        ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
-      fi
+        if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then
+          ARGS="$ARGS --test-cert";
+        fi
 
-      for DOMAIN in $DOMAINS; do
-        ARGS="$ARGS -d $DOMAIN";
-      done
+        if [ "$LETSENCRYPT_EMAIL_ADDRESS" ]; then
+          ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
+        fi
 
-      echo 'Requesting cert from letsencrypt'
-      if certbot certonly $ARGS; then
-        echo 'Pushing current cert by domain MD5 to consul'
-        curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LE_CERT > /dev/null
+        for DOMAIN in $DOMAINS; do
+          ARGS="$ARGS -d $DOMAIN";
+        done
 
-        echo 'Saving current key by domain MD5 to consul'
-        curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LE_KEY > /dev/null
+        echo 'Requesting cert from letsencrypt'
+        if certbot $ARGS; then
+          echo 'Pushing current cert by domain MD5 to consul'
+          curl -fsSXPUT $MD5_URL/fullchain.pem --data-binary @$LE_CERT > /dev/null
 
-        echo 'Updating cert version'
-        VERSION=$(md5sum $LE_CERT | awk '{ print $1 }')
-        curl -fsSXPUT $VERSION_URL -d $VERSION  > /dev/null
+          echo 'Saving current key by domain MD5 to consul'
+          curl -fsSXPUT $MD5_URL/privkey.pem --data-binary @$LE_KEY > /dev/null
 
-        # The version update above will trigger another consul-template run, so
-        # let the nginx reload happen then.
-        exit
+          echo 'Updating cert version'
+          VERSION=$(md5sum $LE_CERT | awk '{ print $1 }')
+          curl -fsSXPUT $VERSION_URL -d $VERSION  > /dev/null
+          # The version update above will trigger another consul-template run, so
+          # let the nginx reload happen then.
+          exit
+        fi
+      else
+        echo 'Lock not aquired, waiting for another session to update the cert'
       fi
     fi
   else

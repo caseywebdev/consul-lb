@@ -48,7 +48,7 @@ docker run
 
   # Let's Encrypt has a pretty conservative rate limit on cert requests. It's
   # recommended that when you're testing your DNS settings to make sure
-  # everything is lined up correct you set this value to '1' so enable the use
+  # everything is lined up correct you set this value to '1' to enable the use
   # of Let's Encrypt's staging servers. You can confirm everything is working
   # correctly if you visit your secured domain and see an untrusted cert from
   # Let's Encrypt. Once you see that, you can set this flag back to '0' and
@@ -63,7 +63,7 @@ docker run
   # You can run the pre-built image or modify this repo and build your own.
   # quay.io/coderiety/consul-lb images are tagged by git branch, git tag, and
   # git SHA.
-  quay.io/coderiety/consul-lb:master
+  coderiety/consul-lb:master
 ```
 
 [Consul]: https://www.consul.io
