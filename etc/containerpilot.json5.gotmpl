@@ -20,7 +20,7 @@
     {
       name: 'watch',
       exec: '/code/bin/watch',
-      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
     },
     {
