@@ -43,7 +43,7 @@ if [ "$USE_SSL" == "1" ]; then
     else
       echo 'Cert is out of date, creating session and acquiring lock'
       SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq -r .ID)
-      if curl -fsSXPUT "$LOCK_URL?acquire=$SESSION"; then
+      if [ "$(curl -fsSXPUT "$LOCK_URL?acquire=$SESSION")" == 'true' ]; then
 
         ARGS='certonly --manual -n --agree-tos --cert-name=consul-lb'
         ARGS="$ARGS --manual-public-ip-logging-ok"
