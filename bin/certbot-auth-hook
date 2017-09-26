@@ -6,6 +6,3 @@ curl \
   -fsSXPUT \
   $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/acme-challenge/$CERTBOT_TOKEN \
   -d "$CERTBOT_VALIDATION"
-
-# Give the update a chance to propagate to all lb instances...
-sleep 5
