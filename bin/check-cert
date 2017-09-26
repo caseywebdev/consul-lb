@@ -10,11 +10,10 @@ DOMAINS=$(
 )
 
 if [ ! "$DOMAINS" ]; then
-  echo 'No domains found, skipping cert checks'
   exit
 fi
 
-echo "Checking if cert is valid for: $DOMAINS"
+echo "Pulling cert for: $DOMAINS"
 DOMAINS_MD5=$(printf "$DOMAINS" | md5sum | awk '{ print $1 }')
 SESSION_URL=$CONSUL_URL/v1/session/create
 KV_URL=$CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT
@@ -29,7 +28,6 @@ LE_DIR=/etc/letsencrypt/live/consul-lb
 LE_CERT=$LE_DIR/fullchain.pem
 LE_KEY=$LE_DIR/privkey.pem
 
-echo 'Pulling cert by domain MD5 from consul'
 curl -s $MD5_URL/fullchain.pem?raw > $TMP_CERT
 curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
