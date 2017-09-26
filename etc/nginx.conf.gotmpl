@@ -29,7 +29,7 @@ http {
         return 403;
       }
 
-      rewrite .* /v1/kv/{{print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT")}}$1?raw break;
+      rewrite (.*) /v1/kv/{{print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT")}}$1?raw break;
       proxy_pass {{env "CONSUL_URL"}};
     }
 
