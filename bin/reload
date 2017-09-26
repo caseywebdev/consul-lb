@@ -42,7 +42,7 @@ if [ "$USE_SSL" == "1" ]; then
       cp -f $TMP_KEY $KEY
     else
       echo 'Cert is out of date, creating session and acquiring lock'
-      $SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq .ID)
+      SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq .ID)
       if curl -fsSXPUT "$LOCK_URL?acquire=$SESSION"; then
 
         ARGS='certonly --manual -n --agree-tos --cert-name=consul-lb'
