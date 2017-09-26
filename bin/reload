@@ -42,19 +42,17 @@ if [ "$USE_SSL" == "1" ]; then
       cp -f $TMP_KEY $KEY
     else
       echo 'Cert is out of date, creating session and acquiring lock'
-      SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq .ID)
+      SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq -r .ID)
       if curl -fsSXPUT "$LOCK_URL?acquire=$SESSION"; then
 
         ARGS='certonly --manual -n --agree-tos --cert-name=consul-lb'
+        ARGS="$ARGS --manual-public-ip-logging-ok"
         ARGS="$ARGS --manual-auth-hook=/code/bin/certbot-auth-hook"
         ARGS="$ARGS --manual-cleanup-hook=/code/bin/certbot-cleanup-hook"
+        ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
 
         if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then
           ARGS="$ARGS --test-cert";
-        fi
-
-        if [ "$LETSENCRYPT_EMAIL_ADDRESS" ]; then
-          ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
         fi
 
         for DOMAIN in $DOMAINS; do
