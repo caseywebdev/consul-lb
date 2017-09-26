@@ -18,15 +18,15 @@
       consul: {deregisterCriticalServiceAfter: '10m'}
     },
     {
+      name: 'watch',
+      exec: '/code/bin/watch',
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
+      restarts: 'unlimited'
+    },
+    {
       name: 'initial-reload',
       exec: '/code/bin/reload',
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
-    },
-    {
-      name: 'watch',
-      exec: '/code/bin/watch',
-      when: {source: 'initial-reload', once: 'exitSuccess'},
-      restarts: 'unlimited'
     }
   ]
 }
