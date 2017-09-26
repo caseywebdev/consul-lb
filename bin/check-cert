@@ -52,10 +52,10 @@ if [ "$(curl -fsSXPUT "$LOCK_URL?acquire=$SESSION")" != 'true' ]; then
 fi
 
 ARGS='certonly --manual -n --agree-tos --cert-name=consul-lb'
+ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
 ARGS="$ARGS --manual-public-ip-logging-ok"
 ARGS="$ARGS --manual-auth-hook=/code/bin/certbot-auth-hook"
 ARGS="$ARGS --manual-cleanup-hook=/code/bin/certbot-cleanup-hook"
-ARGS="$ARGS --email=$LETSENCRYPT_EMAIL_ADDRESS"
 
 if [ "$LETSENCRYPT_TEST_CERT" == '1' ]; then
   ARGS="$ARGS --test-cert";
