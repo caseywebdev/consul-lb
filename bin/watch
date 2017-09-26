@@ -2,9 +2,16 @@
 
 set -e
 
+CHECK_CERT=''
+
+if [ "$USE_SSL" != "1" ]; then
+  CHECK_CERT='-template /code/etc/cert-version.gotmpl:/code/private/cert-version:/code/bin/check-cert'
+fi
+
 echo 'Watching for service changes'
 exec consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
   -template /code/etc/auth.json.gotmpl:/code/private/auth.json:/code/bin/auth \
-  -template /code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf:/code/bin/reload
+  -template '/code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf:nginx -s reload' \
+  $CHECK_CERT

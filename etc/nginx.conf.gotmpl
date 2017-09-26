@@ -19,7 +19,6 @@ http {
 {{- $kv := (print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT")) -}}
 {{- if eq (env "USE_SSL") "1" }}
 
-  # VERSION {{keyOrDefault (print $kv "/version") "?"}}
   ssl_certificate /code/private/fullchain.pem;
   ssl_certificate_key /code/private/privkey.pem;
 

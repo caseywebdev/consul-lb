@@ -2,7 +2,12 @@
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {{- if env "USE_SSL"}}
-    {name: 'reload', exec: '/code/bin/reload', when: {interval: '12h'}},
+    {
+      name: 'initial-check-cert',
+      exec: '/code/bin/check-cert',
+      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
+    },
+    {name: 'check-cert', exec: '/code/bin/check-cert', when: {interval: '12h'}},
     {{- end}}
     {name: 'setup', exec: '/code/bin/setup'},
     {
@@ -23,10 +28,5 @@
       when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'},
       restarts: 'unlimited'
     },
-    {
-      name: 'initial-reload',
-      exec: '/code/bin/reload',
-      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
-    }
   ]
 }
