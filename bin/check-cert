@@ -40,7 +40,7 @@ if openssl x509 -checkend 2592000 -in $TMP_CERT; then
   exit
 fi
 
-if [ -s /run/nginx/nginx.pid ]; then
+if [ ! -s /run/nginx/nginx.pid ]; then
   exit
 fi
 
