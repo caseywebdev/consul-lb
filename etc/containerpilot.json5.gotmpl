@@ -2,11 +2,6 @@
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
     {{- if env "USE_SSL"}}
-    {
-      name: 'initial-check-cert',
-      exec: '/code/bin/check-cert',
-      when: {source: '{{env "CONSUL_SERVICE_NAME"}}', once: 'healthy'}
-    },
     {name: 'check-cert', exec: '/code/bin/check-cert', when: {interval: '12h'}},
     {{- end}}
     {name: 'setup', exec: '/code/bin/setup'},

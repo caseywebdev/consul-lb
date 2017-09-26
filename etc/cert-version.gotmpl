@@ -1,1 +1,1 @@
-{{keyOrDefault (print $kv "/version") "?"}}
+{{keyOrDefault (print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT") "/version") "?"}}
