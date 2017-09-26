@@ -31,15 +31,18 @@ LE_KEY=$LE_DIR/privkey.pem
 
 echo 'Pulling cert by domain MD5 from consul'
 curl -s $MD5_URL/fullchain.pem?raw > $TMP_CERT
-
-echo 'Pulling key by domain MD5 from consul'
 curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 
-echo 'Checking if the cert will expire within the next 30 days'
 if openssl x509 -checkend 2592000 -in $TMP_CERT; then
   cp -f $TMP_CERT $CERT
   cp -f $TMP_KEY $KEY
-  nginx -s reload
+  if [ -s /run/nginx/nginx.pid ]; then
+    nginx -s reload
+  fi
+  exit
+fi
+
+if [ -s /run/nginx/nginx.pid ]; then
   exit
 fi
 

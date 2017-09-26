@@ -2,8 +2,12 @@
 
 set -e
 
-CHECK_CERT=''
+echo 'Waiting for nginx to start'
+while [ ! -s /run/nginx/nginx.pid ]; do
+  sleep 1
+done
 
+CHECK_CERT=''
 if [ "$USE_SSL" != "1" ]; then
   CHECK_CERT='-template /code/etc/cert-version.gotmpl:/code/private/cert-version:/code/bin/check-cert'
 fi
