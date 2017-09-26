@@ -45,7 +45,7 @@ if [ ! -s /run/nginx/nginx.pid ]; then
 fi
 
 echo 'Cert is out of date, creating session and acquiring lock'
-SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq -r .ID)
+SESSION=$(curl -fsSXPUT $SESSION_URL -d '{"Behavior":"delete","LockDelay":"0s","Name":"acme-challenge-lock","TTL":"60s"}' | jq -r .ID)
 if [ "$(curl -fsSXPUT "$LOCK_URL?acquire=$SESSION")" != 'true' ]; then
   echo 'Lock not aquired, waiting for another session to update the cert'
   exit
