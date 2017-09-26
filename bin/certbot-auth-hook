@@ -4,8 +4,5 @@ set -e
 
 curl \
   -fsSXPUT \
-  $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/acme-challenge/$CERTBOT_TOKEN \
+  $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/.well-known/acme-challenge/$CERTBOT_TOKEN \
   -d "$CERTBOT_VALIDATION"
-
-# Allow time for the change to propagate to all consul-lb instances.
-sleep 5
