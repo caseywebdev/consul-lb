@@ -8,4 +8,4 @@ curl \
   -d "$CERTBOT_VALIDATION"
 
 # Give the update a chance to propagate to all lb instances...
-sleep 15
+sleep 5
