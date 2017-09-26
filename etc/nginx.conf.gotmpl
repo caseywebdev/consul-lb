@@ -26,7 +26,7 @@ http {
   server {
     listen 80 default_server;
 
-  {{- range ls (print $kv "/acme-challenge")}}
+  {{- range ls (print $kv "/acme-challenge/")}}
 
     location /.well-known/acme-challenge/{{.Key}} {
       return 200 "{{.Value}}";
@@ -98,7 +98,7 @@ http {
       auth_basic Restricted;
       auth_basic_user_file /code/private/{{$auth}}.auth;
       {{- end}}
-    {{- end -}}
+    {{- end}}
       proxy_pass http://{{index (scratch.Get (print "upstreamsByDomain:" $domain)) .}};
     }
   {{- end}}
