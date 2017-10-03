@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+nginx -s reload
+
+if [ "$USE_SSL" == '1' ]; then
+  /code/bin/check-cert
+fi

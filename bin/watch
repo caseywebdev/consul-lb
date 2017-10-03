@@ -13,9 +13,9 @@ if [ "$USE_SSL" == '1' ]; then
 fi
 
 echo 'Watching for service changes'
-exec consul-template \
+consul-template \
   -consul-addr $CONSUL_URL \
   -dedup \
   -template /code/etc/auth.json.gotmpl:/code/private/auth.json:/code/bin/auth \
-  -template '/code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf:nginx -s reload' \
+  -template /code/etc/nginx.conf.gotmpl:/etc/nginx/nginx.conf:/code/bin/reload \
   $CHECK_CERT
