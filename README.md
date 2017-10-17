@@ -11,7 +11,7 @@ docker run
   -p 80:80
 
   # If USE_SSL=1 (default), expose port 443 for HTTPS traffic.
-  -p 433:433
+  -p 443:443
 
   # ENVVARS, or how to configure consul-lb to work for you. Each configuration
   # envvar is listed below with its default value.
