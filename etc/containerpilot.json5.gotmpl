@@ -1,9 +1,9 @@
 {
   consul: '{{env "CONSUL_URL"}}',
   jobs: [
-    {{- if env "USE_SSL"}}
+{{- if env "USE_SSL"}}
     {name: 'check-cert', exec: '/code/bin/check-cert', when: {interval: '12h'}},
-    {{- end}}
+{{- end}}
     {name: 'setup', exec: '/code/bin/setup'},
     {
       name: '{{env "CONSUL_SERVICE_NAME"}}',
@@ -11,9 +11,9 @@
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited',
       port: 80,
-      {{- if env "CONSUL_SERVICE_TAGS"}}
+{{- if env "CONSUL_SERVICE_TAGS"}}
       tags: ["{{env "CONSUL_SERVICE_TAGS" | split "," | join "\", \""}}"],
-      {{- end}}
+{{- end}}
       health: {exec: 'curl -fsSo /dev/null localhost', interval: 5, ttl: 10},
       consul: {deregisterCriticalServiceAfter: '10m'}
     },
@@ -22,6 +22,6 @@
       exec: '/code/bin/watch',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
-    },
+    }
   ]
 }

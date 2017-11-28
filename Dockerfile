@@ -1,8 +1,8 @@
 FROM alpine:3.6
 
 ENV \
-  CONSUL_TEMPLATE_VERSION='0.19.3' \
-  CONTAINERPILOT_VERSION='3.4.3'
+  CONSUL_TEMPLATE_VERSION='0.19.4' \
+  CONTAINERPILOT_VERSION='3.6.0'
 
 RUN \
   apk --no-cache add certbot curl jq nginx openssl && \

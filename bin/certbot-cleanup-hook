@@ -4,4 +4,4 @@ set -e
 
 curl \
   -fsSXDELETE \
-  $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/.well-known?recurse=true
+  $CONSUL_URL/v1/kv/$CONSUL_SERVICE_NAME/$LETSENCRYPT_TEST_CERT/.well-known/acme-challenge/$CERTBOT_TOKEN
