@@ -56,7 +56,7 @@ http {
           {{- scratch.MapSet "domains" $domain $domain -}}
           {{- scratch.MapSet (print "pathsByDomain:" $domain) $path $path -}}
           {{- scratch.MapSet (print "upstreamsByDomain:" $domain) $path $upstream -}}
-          {{- if ne $service.Status "failing" -}}
+          {{- if eq $service.Status "passing" -}}
             {{- scratch.MapSet (print "serversByUpstream:" $upstream) $server $server}}
           {{- end -}}
           {{- range $service.Tags -}}
