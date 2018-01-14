@@ -22,6 +22,11 @@
       exec: '/code/bin/watch',
       when: {source: 'setup', once: 'exitSuccess'},
       restarts: 'unlimited'
+    },
+    {
+      name: 'exitOnSetupFail',
+      exec: 'pkill -signal SIGTERM containerpilot',
+      when: {source: 'setup', once: 'exitFailed'}
     }
   ]
 }
