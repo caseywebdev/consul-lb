@@ -1,12 +1,12 @@
-FROM alpine:3.6
+FROM alpine:3.7
 
 ENV \
   CONSUL_TEMPLATE_VERSION='0.19.4' \
-  CONTAINERPILOT_VERSION='3.6.0'
+  CONTAINERPILOT_VERSION='3.6.2'
 
 RUN \
   apk --no-cache add certbot curl jq nginx openssl && \
-  mkdir -p /code/private /run/nginx && \
+  mkdir -p /code/private && \
   curl -fLsS https://releases.hashicorp.com/consul-template/$CONSUL_TEMPLATE_VERSION/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tgz | \
     tar xz -C /usr/local/bin && \
   curl -fLsS https://github.com/joyent/containerpilot/releases/download/$CONTAINERPILOT_VERSION/containerpilot-$CONTAINERPILOT_VERSION.tar.gz | \
