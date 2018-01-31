@@ -34,13 +34,13 @@ curl -s $MD5_URL/privkey.pem?raw > $TMP_KEY
 if openssl x509 -checkend 2592000 -in $TMP_CERT; then
   cp -f $TMP_CERT $CERT
   cp -f $TMP_KEY $KEY
-  if [ -s /run/nginx/nginx.pid ]; then
+  if [ -s /run/nginx.pid ]; then
     nginx -s reload
   fi
   exit
 fi
 
-if [ ! -s /run/nginx/nginx.pid ]; then
+if [ ! -s /run/nginx.pid ]; then
   exit
 fi
 

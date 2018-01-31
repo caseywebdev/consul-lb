@@ -8,6 +8,6 @@ for key in $(jq -r keys[] /code/private/auth.json); do
   jq -r .$key /code/private/auth.json > /code/private/$key.auth
 done
 
-if [ -s /run/nginx/nginx.pid ]; then
+if [ -s /run/nginx.pid ]; then
   nginx -s reload
 fi
