@@ -19,13 +19,14 @@ http {
   proxy_set_header X-Real-IP $remote_addr;
 
 {{- if eq (env "USE_SSL") "1" }}
-
   ssl_certificate /code/private/fullchain.pem;
   ssl_certificate_key /code/private/privkey.pem;
+{{- end}}
 
   server {
     listen 80 default_server;
 
+{{- if eq (env "USE_SSL") "1" }}
     location /.well-known/acme-challenge/ {
       if ($request_method != GET) {
         return 403;
@@ -34,12 +35,17 @@ http {
       rewrite (.*) /v1/kv/{{print (env "CONSUL_SERVICE_NAME") "/" (env "LETSENCRYPT_TEST_CERT")}}$1?raw break;
       proxy_pass {{env "CONSUL_URL"}};
     }
+{{- end}}
+
 
     location / {
+{{- if eq (env "USE_SSL") "1" }}
       return 302 https://$host$request_uri;
+{{ else }}
+      return 204;
+{{- end}}
     }
   }
-{{- end -}}
 
 {{- $prefix := env "CONSUL_TAG_PREFIX" -}}
 {{- $prefixAuthRegex := print "^" $prefix "\\.auth=" -}}
