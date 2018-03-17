@@ -61,8 +61,7 @@ docker run
   -e USE_SSL='1'
 
   # You can run the pre-built image or modify this repo and build your own.
-  # quay.io/coderiety/consul-lb images are tagged by git branch, git tag, and
-  # git SHA.
+  # coderiety/consul-lb images are tagged by git branch, git tag, and git SHA.
   coderiety/consul-lb:master
 ```
 
