@@ -39,7 +39,11 @@ http {
 
 
     location / {
-      return 302 http{{if eq (env "USE_SSL") "1"}}s{{end}}://$host$request_uri;
+{{- if eq (env "USE_SSL") "1" }}
+      return 302 https://$host$request_uri;
+{{ else }}
+      return 204;
+{{- end}}
     }
   }
 
